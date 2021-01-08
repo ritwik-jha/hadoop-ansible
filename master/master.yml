@@ -1,0 +1,39 @@
+- hosts: localhost
+  tasks:
+          - name: copying jdk to master
+            copy:
+                    src: /root/Downloads/jdk-8u171-linux-x64.rpm
+                    dest: /root/
+
+          - name: copying hadoop to master
+            copy:
+                    src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+                    dest: /root/
+          - name: installing jdk in master
+            shell: "rpm -i /root/jdk-8u171-linux-x64.rpm"
+            ignore_errors: yes
+
+          - name: installing hadoop
+            shell: "rpm -i /root/hadoop-1.2.1-1.x86_64.rpm --force"
+            ignore_errors: yes
+
+          - name: copy core-site.xml
+            copy:
+                    src: /root/playbooks/hadoop/master/core-site.xml
+                    dest: /etc/hadoop/
+          - name: copy hdfs-site.xml
+            copy:
+                    src: /root/playbooks/hadoop/master/hdfs-site.xml
+                    dest: /etc/hadoop/
+          - name: creating /nn folder
+            file:
+                    path: /nn
+                    state: directory
+          - name: formatting namenode
+            shell: "hadoop namenode -Y -format"
+            ignore_errors: yes
+
+          - name: starting namenode
+            shell: "hadoop-daemon.sh start namenode"
+
+
