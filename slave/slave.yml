@@ -1,0 +1,36 @@
+- hosts: all
+  tasks:
+          - name: copying jdk to slave
+            copy:
+                    src: /root/Downloads/jdk-8u171-linux-x64.rpm
+                    dest: /root/
+
+          - name: copying hadoop to slave
+            copy:
+                    src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+                    dest: /root/
+          - name: installing jdk in slave
+            shell: "rpm -i /root/jdk-8u171-linux-x64.rpm"
+            ignore_errors: yes
+
+          - name: installing slave
+            shell: "rpm -i /root/hadoop-1.2.1-1.x86_64.rpm --force"
+            ignore_errors: yes
+
+          - name: copy core-site.xml
+            copy:
+                    src: /root/playbooks/hadoop/slave/core-site.xml
+                    dest: /etc/hadoop/
+          - name: copy hdfs-site.xml
+            copy:
+                    src: /root/playbooks/hadoop/slave/hdfs-site.xml
+                    dest: /etc/hadoop/
+          - name: creating /dn folder
+            file:
+                    path: /dn
+                    state: directory
+
+          - name: starting datanode
+            shell: "hadoop-daemon.sh start datanode"
+
+
